@@ -46,6 +46,8 @@
   }
 
   f.addEventListener('load', function(){
+    // 실제 폰처럼 스크롤바가 자리를 차지하지 않게 (390px 그대로 보이도록)
+    try { f.contentDocument.documentElement.style.scrollbarWidth='none'; } catch(e) {}
     window.__check.metrics=metrics();
     window.__check.stage='first-load';
     // 앱 인라인 스크립트를 같은 iframe에서 한 번 더 실행하며 에러를 잡습니다
