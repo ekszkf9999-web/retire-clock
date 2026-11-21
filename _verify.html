@@ -12,7 +12,7 @@
 </style>
 </head>
 <body>
-<div id="stage"><iframe id="frame" src="./index.html" width="390" height="844" title="명퇴시계 390x844"></iframe></div>
+<div id="stage"><iframe id="frame" width="390" height="844" title="명퇴시계 390x844"></iframe></div>
 <div id="panel"></div>
 <script>
 var frame=document.getElementById('frame'), panel=document.getElementById('panel');
@@ -23,6 +23,8 @@ function draw(){
   var lines=[];
   lines.push('frame '+frame.clientWidth+'x'+frame.clientHeight);
   if(de){
+    var ver=d.getElementById('sVer');
+    if(ver) lines.push('build: '+ver.textContent.slice(0,60));
     lines.push('doc scrollWidth '+de.scrollWidth+' / clientWidth '+de.clientWidth+'  '+(de.scrollWidth>de.clientWidth?'가로 스크롤 있음':'가로 스크롤 없음'));
     lines.push('body scrollWidth '+d.body.scrollWidth);
   }
@@ -53,6 +55,7 @@ function hook(){
 frame.addEventListener('load',function(){ hook(); setTimeout(draw,80); });
 setInterval(function(){ hook(); },400);
 setTimeout(draw,1200);
+frame.src='./index.html?t='+Date.now();
 </script>
 </body>
 </html>
