@@ -253,6 +253,16 @@ textarea:focus{border-color:var(--acc)}
   font-size:13px;font-weight:700;text-align:center;outline:none}
 .note{font-size:11px;color:var(--mute);line-height:1.6;margin-top:10px}
 .note b{color:var(--sub)}
+.gset{padding:11px 0;border-bottom:1px solid var(--line2)}
+.gset:last-child{border-bottom:0}
+.gset-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.gset-top .no{width:22px;height:22px;border-radius:7px;background:var(--gc);color:#fff;font-size:11.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex:none}
+[data-theme="dark"] .gset-top .no{color:#06120e}
+.glb{flex:1 1 0%;width:0;min-width:0;background:var(--input);border:1px solid var(--line);border-radius:9px;
+  padding:7px 10px;font-size:13.5px;font-weight:700;outline:none;letter-spacing:-.01em}
+.glb:focus{border-color:var(--acc)}
+.gdt{width:100%;text-align:center}
 
 /* ---------- 하단 시트 ---------- */
 .scrim{position:fixed;inset:0;background:rgba(2,6,10,.5);opacity:0;pointer-events:none;transition:opacity .22s;z-index:70}
@@ -344,13 +354,14 @@ textarea:focus{border-color:var(--acc)}
     <div class="card"><div id="cSum"></div></div>
 
     <p class="note">날짜를 누르면 메모를 남길 수 있습니다. 빨간 날은 공휴일·대체공휴일이고, 작은 점은 메모가 있는 날입니다.</p>
+    <p class="note" id="cNote"></p>
   </section>
 
   <!-- ======== 자산 ======== -->
   <section class="view" id="v-asset">
     <div class="vhead">
       <div>
-        <p class="eyebrow">퇴직까지 60억</p>
+        <p class="eyebrow" id="aHead">퇴직까지 60억</p>
         <h1 class="vtitle">자산 트래커</h1>
       </div>
     </div>
@@ -426,7 +437,7 @@ textarea:focus{border-color:var(--acc)}
   <section class="view" id="v-set">
     <div class="vhead">
       <div>
-        <p class="eyebrow">명퇴시계 v1.0</p>
+        <p class="eyebrow">명퇴시계 v1.1</p>
         <h1 class="vtitle">설정</h1>
       </div>
     </div>
@@ -466,11 +477,39 @@ textarea:focus{border-color:var(--acc)}
 
     <div class="card">
       <div class="card-h"><span class="card-t">홈 <b>메인 목표</b></span></div>
-      <div class="seg" id="sMain">
-        <button data-main="g1">명퇴 가능</button>
-        <button data-main="g2">1차 퇴직</button>
-        <button data-main="g3">최종 명퇴</button>
+      <div class="seg" id="sMain"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="card-t">목표 <b>일정</b></span><span class="card-t">이름 · 날짜</span></div>
+      <div class="gset" style="--gc:var(--g1)">
+        <div class="gset-top"><span class="no">1</span><input class="glb" id="sG1L" type="text" maxlength="24" aria-label="1번 일정 이름" placeholder="명퇴 가능일"></div>
+        <input class="mini gdt" id="sG1D" type="date" aria-label="1번 일정 날짜">
       </div>
+      <div class="gset" style="--gc:var(--g2)">
+        <div class="gset-top"><span class="no">2</span><input class="glb" id="sG2L" type="text" maxlength="24" aria-label="2번 일정 이름" placeholder="1차 퇴직 고려일"></div>
+        <input class="mini gdt" id="sG2D" type="date" aria-label="2번 일정 날짜">
+      </div>
+      <div class="gset" style="--gc:var(--g3)">
+        <div class="gset-top"><span class="no">3</span><input class="glb" id="sG3L" type="text" maxlength="24" aria-label="3번 일정 이름" placeholder="최종 명퇴 예정일"></div>
+        <input class="mini gdt" id="sG3D" type="date" aria-label="3번 일정 날짜">
+      </div>
+      <button class="btn ghost wide" id="sGoalReset" style="margin-top:12px">목표 기본값 복원</button>
+      <p class="note">이름과 날짜를 바꾸면 홈·달력·자산 화면에 바로 반영됩니다. 마지막 일정을 뒤로 미루면 달력도 그해 12월까지 넓어집니다.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="card-t">목표 <b>자산</b></span><span class="card-t">만원 단위</span></div>
+      <div class="srow">
+        <div class="sl"><b>1차 목표 자산</b><span id="sT1Hint">—</span></div>
+        <div class="sr"><input class="mini" id="sT1" type="text" inputmode="numeric" aria-label="1차 목표 자산" style="width:92px"><span style="font-size:12px;color:var(--sub);font-weight:700">만원</span></div>
+      </div>
+      <div class="srow">
+        <div class="sl"><b>최종 목표 자산</b><span id="sT2Hint">—</span></div>
+        <div class="sr"><input class="mini" id="sT2" type="text" inputmode="numeric" aria-label="최종 목표 자산" style="width:92px"><span style="font-size:12px;color:var(--sub);font-weight:700">만원</span></div>
+      </div>
+      <button class="btn ghost wide" id="sTReset" style="margin-top:12px">자산 목표 기본값 복원</button>
+      <p class="note">자산 탭의 게이지·달성률·시뮬레이터·차트 목표선과 화면 위쪽 문구가 이 값에 맞춰 바뀝니다.</p>
     </div>
 
     <div class="card">
@@ -488,7 +527,7 @@ textarea:focus{border-color:var(--acc)}
       <div class="card-h"><span class="card-t">안내</span></div>
       <div class="rows">
         <div class="row"><div class="ic">📅</div><div class="tx"><b>공휴일 데이터</b><span>관공서의 공휴일에 관한 규정(2026.5.11. 시행) 기준</span></div></div>
-        <div class="row"><div class="ic">🏛️</div><div class="tx"><b>3대 일정</b><span>명퇴 2028.3.31 · 1차 2032.12.31 · 최종 2036.12.31</span></div></div>
+        <div class="row"><div class="ic">🏛️</div><div class="tx"><b>3대 일정</b><span id="sGoalsNote">—</span></div></div>
         <div class="row"><div class="ic">📴</div><div class="tx"><b>오프라인</b><span>한 번 열면 인터넷 없이도 동작합니다</span></div></div>
         <div class="row"><div class="ic">📲</div><div class="tx"><b>앱처럼 열기</b><span>크롬 메뉴 → '홈 화면에 추가'로 설치하세요</span></div></div>
       </div>
@@ -558,15 +597,52 @@ var HOLIDAYS={"2026-12-25":["성탄절"],"2027-01-01":["신정"],"2027-02-06":["
 
 var SUBSRC={"2027-02-09":"2027-02-07","2027-05-03":"2027-05-01","2027-07-19":"2027-07-17","2027-08-16":"2027-08-15","2027-10-04":"2027-10-03","2027-10-11":"2027-10-09","2027-12-27":"2027-12-25","2028-10-05":"2028-10-03","2029-05-07":"2029-05-05","2029-05-21":"2029-05-20","2029-09-24":"2029-09-23","2030-02-05":"2030-02-03","2030-05-06":"2030-05-05","2031-03-03":"2031-03-01","2032-05-03":"2032-05-01","2032-05-17":"2032-05-16","2032-07-19":"2032-07-17","2032-08-16":"2032-08-15","2032-09-21":"2032-09-19","2032-10-04":"2032-10-03","2032-10-11":"2032-10-09","2032-12-27":"2032-12-25","2033-02-02":"2033-01-30","2033-05-02":"2033-05-01","2033-07-18":"2033-07-17","2033-10-10":"2033-10-09","2033-12-26":"2033-12-25","2034-02-21":"2034-02-19","2035-05-07":"2035-05-05","2035-09-18":"2035-09-16","2036-01-30":"2036-01-27","2036-03-03":"2036-03-01","2036-05-06":"2036-05-03","2036-10-06":"2036-10-03","2036-10-07":"2036-10-05"};
 
-var GOALS=[
-  {id:'g1',no:'1',label:'명퇴 가능일',short:'명퇴 가능',badge:'명퇴',date:'2028-03-31'},
-  {id:'g2',no:'2',label:'1차 퇴직 고려일',short:'1차 퇴직',badge:'1차',date:'2032-12-31'},
-  {id:'g3',no:'3',label:'최종 명퇴 예정일',short:'최종 명퇴',badge:'최종',date:'2036-12-31'}
+/* 목표 일정 3개 — 기본값은 사용자의 명퇴 3대 일정, 설정에서 이름·날짜를 바꿀 수 있습니다 */
+var DEF_GOALS=[
+  {id:'g1',no:'1',label:'명퇴 가능일',date:'2028-03-31'},
+  {id:'g2',no:'2',label:'1차 퇴직 고려일',date:'2032-12-31'},
+  {id:'g3',no:'3',label:'최종 명퇴 예정일',date:'2036-12-31'}
 ];
-var GMAP={}; GOALS.forEach(function(g){ GMAP[g.date]=g; });
+var DEF_T1=100000, DEF_T2=600000;            // 만원 (10억 / 60억)
+var CAL_Y0=2026, CAL_M0=10;                  // 달력 기본 시작 2026.11
 
-var T10=100000, T60=600000;   // 만원 (10억 / 60억)
-var MINM=2026*12+10, MAXM=2036*12+11;
+var GOALS=[], GMAP={};
+function defGoals(){ return DEF_GOALS.map(function(g){ return {id:g.id,label:g.label,date:g.date}; }); }
+function cleanLabel(s){
+  return String(s==null?'':s).replace(/[<>&"']/g,'').replace(/\s+/g,' ').trim().slice(0,24);
+}
+function shortLabel(l){
+  if(l.length<=8) return l;
+  var parts=l.split(' ').filter(function(x){ return !!x; });
+  if(parts.length>1){
+    var two=parts[0]+' '+parts[1];
+    if(two.length<=9) return two;
+    if(parts[0].length<=9) return parts[0];
+  }
+  return l.slice(0,7)+'…';
+}
+function badgeLabel(l){ return l.length>2? l.slice(0,2) : (l||'·'); }
+function buildGoals(){
+  var src=(S&&S.goals)||defGoals();
+  GOALS=DEF_GOALS.map(function(d,i){
+    var o=src[i]||{};
+    var label=cleanLabel(o.label)||d.label;
+    var date=/^\d{4}-\d{2}-\d{2}$/.test(String(o.date||''))?String(o.date):d.date;
+    return {id:d.id,no:d.no,label:label,date:date,short:shortLabel(label),badge:badgeLabel(label)};
+  });
+  GMAP={};
+  GOALS.forEach(function(g){ GMAP[g.date]=g; });
+}
+function lastGoal(){
+  var g=GOALS[0];
+  for(var i=1;i<GOALS.length;i++) if(GOALS[i].date>g.date) g=GOALS[i];
+  return g;
+}
+function maxYear(){
+  var y=2036;
+  GOALS.forEach(function(g){ var v=parseInt(g.date.slice(0,4),10); if(v>y) y=v; });
+  return y;
+}
 
 var PR=[
   {k:'h',no:'①',name:'건강',desc:'몸이 먼저다. 오늘도 몸을 움직였나'},
@@ -576,18 +652,42 @@ var PR=[
 
 /* ================= 상태 ================= */
 function defState(){
-  return {v:1, theme:'dark', start:'2026-11-20', payDay:25, mainGoal:'g1', birth:'',
+  return {v:2, theme:'dark', start:'2026-11-20', payDay:25, mainGoal:'g1', birth:'',
+          goals:defGoals(), targets:{t1:DEF_T1, t2:DEF_T2},
           assets:{cur:null, add:100, rate:5, updated:null},
           memos:{}, life:{}};
+}
+function normGoals(src){
+  var out=defGoals();
+  if(Array.isArray(src)){
+    for(var i=0;i<3;i++){
+      var o=src[i]; if(!o||typeof o!=='object') continue;
+      var lb=cleanLabel(o.label); if(lb) out[i].label=lb;
+      if(/^\d{4}-\d{2}-\d{2}$/.test(String(o.date||''))) out[i].date=String(o.date);
+    }
+  }
+  return out;
+}
+function normTargets(src){
+  var d={t1:DEF_T1, t2:DEF_T2};
+  if(!src||typeof src!=='object') return d;
+  var a=parseInt(src.t1,10), b=parseInt(src.t2,10);
+  if(a>=1&&a<=99999999) d.t1=a;
+  if(b>=1&&b<=99999999) d.t2=b;
+  return d;
+}
+function normalize(){
+  S.goals=normGoals(S.goals);
+  S.targets=normTargets(S.targets);
+  buildGoals();
 }
 var S=defState();
 
 function load(){
   try{
     var raw=localStorage.getItem(KEY);
-    if(!raw) return;
-    var o=JSON.parse(raw);
-    if(!o||typeof o!=='object') return;
+    var o=raw?JSON.parse(raw):null;
+    if(!o||typeof o!=='object'){ normalize(); return; }
     var d=defState();
     S=Object.assign(d,o);
     S.assets=Object.assign(defState().assets, o.assets||{});
@@ -597,8 +697,9 @@ function load(){
     if(!/^\d{4}-\d{2}-\d{2}$/.test(String(S.start||''))) S.start='2026-11-20';
     if(!/^\d{4}-\d{2}-\d{2}$/.test(String(S.birth||''))) S.birth='';
     S.payDay=Math.min(31,Math.max(1,parseInt(S.payDay,10)||25));
-    if(!GOALS.some(function(g){return g.id===S.mainGoal;})) S.mainGoal='g1';
+    if(!DEF_GOALS.some(function(d){return d.id===S.mainGoal;})) S.mainGoal='g1';
   }catch(e){ S=defState(); }
+  normalize();
 }
 function save(){
   if(!storageOK){ if(!saveWarned){ saveWarned=true; toast('이 환경에서는 저장이 막혀 있어요. JSON 백업을 써 두세요'); } return; }
@@ -619,9 +720,20 @@ function monthsBetween(a,b){ var A=s2d(a),B=s2d(b); return (B.getFullYear()-A.ge
 function dayDiff(a,b){ return Math.round((s2d(b).getTime()-s2d(a).getTime())/86400000); }
 var WD=['일','월','화','수','목','금','토'];
 function wdOf(iso){ return WD[s2d(iso).getDay()]; }
-function holOf(iso){ return HOLIDAYS[iso]||null; }
+/* 2037년 이후(정리된 데이터 범위 밖)는 양력 고정 공휴일 + 주말로만 계산합니다 */
+var FIXED_HOL={
+  '01-01':'신정','03-01':'삼일절','05-01':'노동절','05-05':'어린이날','06-06':'현충일',
+  '07-17':'제헌절','08-15':'광복절','10-03':'개천절','10-09':'한글날','12-25':'성탄절'
+};
+function holOf(iso){
+  var v=HOLIDAYS[iso]; if(v) return v;
+  if(parseInt(String(iso).slice(0,4),10)>=2037){
+    var f=FIXED_HOL[String(iso).slice(5)]; if(f) return [f];
+  }
+  return null;
+}
 function isWeekend(iso){ var w=s2d(iso).getDay(); return w===0||w===6; }
-function isWorkday(iso){ return !isWeekend(iso)&&!HOLIDAYS[iso]; }
+function isWorkday(iso){ return !isWeekend(iso)&&!holOf(iso); }
 function comma(n){ return Number(n).toLocaleString('ko-KR'); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function koDate(iso){ var d=s2d(iso); return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일'; }
@@ -675,7 +787,7 @@ function ymdText(r){
 function paydayOf(y,m){
   var last=new Date(y,m+1,0).getDate();
   var d=new Date(y,m,Math.min(S.payDay,last)), guard=0;
-  while(guard++<12&&(d.getDay()===0||d.getDay()===6||HOLIDAYS[d2s(d)])) d=addDays(d,-1);
+  while(guard++<12&&(d.getDay()===0||d.getDay()===6||holOf(d2s(d)))) d=addDays(d,-1);
   return d2s(d);
 }
 function nextPayday(fromISO){
@@ -758,7 +870,7 @@ function renderHome(){
   var nh=null;
   for(var i=0;i<800;i++){
     var iso=d2s(addDays(todayDate(),i));
-    if(HOLIDAYS[iso]){ nh=iso; break; }
+    if(holOf(iso)){ nh=iso; break; }
   }
   var nk=nextPayday(t);
   $('#hSumNote').textContent='오늘 '+koMD(t)+' 기준';
@@ -798,18 +910,24 @@ function tickCountdown(){
 /* ================= 달력 ================= */
 var calY=2026, calM=10, calSel=null;
 function clampCal(y,m){
-  var v=y*12+m;
-  if(v<MINM) v=MINM;
-  if(v>MAXM) v=MAXM;
+  var v=y*12+m, lo=CAL_Y0*12+CAL_M0, hi=maxYear()*12+11;
+  if(v<lo) v=lo;
+  if(v>hi) v=hi;
   return {y:Math.floor(v/12), m:v%12};
 }
 function renderCal(){
   var t=todayISO();
   $('#cTitle').textContent=calY+'년 '+(calM+1)+'월';
-  var ys=$('#cYear'), ms=$('#cMonth');
-  if(ys.options.length===0){
-    var oh=''; for(var y=2026;y<=2036;y++) oh+='<option value="'+y+'">'+y+'년</option>';
-    ys.innerHTML=oh;
+  var ys=$('#cYear'), ms=$('#cMonth'), top=maxYear();
+  $('#cRange').textContent=CAL_Y0+'.'+pad(CAL_M0+1)+' — '+top+'.12';
+  $('#cNote').innerHTML = top>2036
+    ? '목표 날짜를 '+top+'년까지 미뤄서 달력도 함께 넓혔습니다. 2037년부터는 양력 고정 공휴일과 주말만 계산합니다(설·추석·대체공휴일 제외).'
+    : '';
+  if(ys.getAttribute('data-max')!==String(top)){
+    var oh=''; for(var y=CAL_Y0;y<=top;y++) oh+='<option value="'+y+'">'+y+'년</option>';
+    ys.innerHTML=oh; ys.setAttribute('data-max',String(top));
+  }
+  if(ms.options.length===0){
     var om=''; for(var m=1;m<=12;m++) om+='<option value="'+m+'">'+m+'월</option>';
     ms.innerHTML=om;
   }
@@ -839,8 +957,8 @@ function renderCal(){
 
   var hs=[];
   for(var dd=1;dd<=last;dd++){
-    var i2=calY+'-'+pad(calM+1)+'-'+pad(dd);
-    if(HOLIDAYS[i2]) hs.push('<span class="hchip"><b>'+koMD(i2)+'</b>'+esc(HOLIDAYS[i2].join('·'))+(SUBSRC[i2]?' <span style="opacity:.7">('+koMD(SUBSRC[i2])+' 대체)</span>':'')+'</span>');
+    var i2=calY+'-'+pad(calM+1)+'-'+pad(dd), hh=holOf(i2);
+    if(hh) hs.push('<span class="hchip"><b>'+koMD(i2)+'</b>'+esc(hh.join('·'))+(SUBSRC[i2]?' <span style="opacity:.7">('+koMD(SUBSRC[i2])+' 대체)</span>':'')+'</span>');
   }
   $('#cHoli').innerHTML=hs.length?hs.join(''):'<span style="font-size:11.5px;color:var(--mute)">이 달에는 공휴일이 없습니다.</span>';
 
@@ -891,9 +1009,13 @@ function saveMemo(){
 }
 
 /* ================= 자산 ================= */
+function horizonISO(){
+  var y=parseInt(lastGoal().date.slice(0,4),10)+1;
+  return Math.max(2037,y)+'-06-01';
+}
 function projectAll(){
   var cur=S.assets.cur||0, add=S.assets.add||0, rate=(S.assets.rate==null?5:S.assets.rate);
-  var from=todayISO(), months=Math.max(1,monthsBetween(from,'2037-06-01'));
+  var from=todayISO(), months=Math.max(1,monthsBetween(from,horizonISO()));
   var rm=rate===0?0:Math.pow(1+rate/100,1/12)-1;
   var series=[], v=cur;
   for(var i=0;i<=months;i++){
@@ -911,47 +1033,51 @@ function crossing(pr,target){
   return null;
 }
 function renderAsset(){
-  var cur=S.assets.cur;
+  var cur=S.assets.cur, T1=S.targets.t1, T2=S.targets.t2;
+  document.title='명퇴시계 — 퇴직까지 '+fmtShort(T2);
+  $('#aHead').textContent='퇴직까지 '+fmtShort(T2);
   var el=$('#aCur');
   if(document.activeElement!==el) el.value=(cur==null?'':comma(cur));
   $('#aStamp').textContent=S.assets.updated? (S.assets.updated.replace(/-/g,'.')+' 기준') : '—';
   var c=cur||0;
-  $('#aG10').innerHTML=gaugeHTML('1차 목표 10억',T10,c);
-  $('#aG60').innerHTML=gaugeHTML('최종 목표 60억',T60,c);
+  $('#aG10').innerHTML=gaugeHTML('1차 목표 '+fmtShort(T1),T1,c);
+  $('#aG60').innerHTML=gaugeHTML('최종 목표 '+fmtShort(T2),T2,c);
 
   var addEl=$('#aAdd'), rateEl=$('#aRate');
   if(document.activeElement!==addEl) addEl.value=(S.assets.add==null?'':comma(S.assets.add));
   if(document.activeElement!==rateEl) rateEl.value=(S.assets.rate==null?'':String(S.assets.rate));
 
   var pr=projectAll();
-  var c10=crossing(pr,T10), c60=crossing(pr,T60);
-  var last=pr.series[pr.series.length-1];
+  var c1=crossing(pr,T1), c2=crossing(pr,T2);
+  var ref=lastGoal().date, refTag=ref.slice(0,4)+'.'+ref.slice(5,7);
+  var endTag=pr.series[pr.series.length-1].iso.slice(0,4);
 
-  var N=Math.max(1,monthsBetween(pr.from,'2036-12-31'));
+  var N=Math.max(1,monthsBetween(pr.from,ref));
   var fv=Math.pow(1+pr.rm,N);
-  var need=(T60-c*fv)*pr.rm/(fv-1);
-  if(pr.rate===0) need=(T60-c)/N;
+  var need=(T2-c*fv)*pr.rm/(fv-1);
+  if(pr.rate===0) need=(T2-c)/N;
+  var vRef=valueAt(pr,ref);
 
   $('#aSim').innerHTML=
-    simCell('10억 도달', c10? (c10.iso.slice(0,4)+'.'+c10.iso.slice(5,7)) : '미도달', c10? (ageTxt(c10.iso)||'10억 시점') : '2037년까지')+
-    simCell('60억 도달', c60? (c60.iso.slice(0,4)+'.'+c60.iso.slice(5,7)) : '미도달', c60? (ageTxt(c60.iso)||'60억 시점') : '2037년까지')+
-    simCell('2036년 말 예상', fmtShort(valueAt(pr,'2036-12-31')), '60억의 '+Math.round(valueAt(pr,'2036-12-31')/T60*100)+'%')+
-    simCell('60억까지 필요', (need>0? fmtShort(Math.ceil(need/10)*10):'0')+'/월', '2036.12까지');
+    simCell(fmtShort(T1)+' 도달', c1? (c1.iso.slice(0,4)+'.'+c1.iso.slice(5,7)) : '미도달', c1? (ageTxt(c1.iso)||fmtShort(T1)+' 시점') : endTag+'년까지')+
+    simCell(fmtShort(T2)+' 도달', c2? (c2.iso.slice(0,4)+'.'+c2.iso.slice(5,7)) : '미도달', c2? (ageTxt(c2.iso)||fmtShort(T2)+' 시점') : endTag+'년까지')+
+    simCell(refTag+' 예상', fmtShort(vRef), fmtShort(T2)+'의 '+Math.round(vRef/T2*100)+'%')+
+    simCell(fmtShort(T2)+'까지 필요', (need>0? fmtShort(Math.ceil(need/10)*10):'0')+'/월', refTag+'까지');
 
   if(c==null||c===0){
-    $('#aNeed').innerHTML='현재 금융자산을 입력하면 10억·60억까지의 거리를 계산합니다.';
+    $('#aNeed').innerHTML='현재 금융자산을 입력하면 '+fmtShort(T1)+'·'+fmtShort(T2)+'까지의 거리를 계산합니다.';
   }else if(need<=0){
-    $('#aNeed').innerHTML='지금 자산에 월 '+fmtShort(pr.add)+'씩 넣으면 연 '+pr.rate+'% 가정에서 2036년 말 60억을 넘습니다.';
+    $('#aNeed').innerHTML='지금 자산에 월 '+fmtShort(pr.add)+'씩 넣으면 연 '+pr.rate+'% 가정에서 '+koDate(ref)+'에 '+fmtShort(T2)+'을 넘습니다.';
   }else{
-    $('#aNeed').innerHTML='60억을 2036년 12월 31일까지 만들려면 연 '+pr.rate+'% 가정에서 매월 <b>'+fmtMan(Math.ceil(need/10)*10)+'원</b>이 필요합니다(지금 계획은 월 '+fmtShort(pr.add)+').';
+    $('#aNeed').innerHTML=fmtShort(T2)+'을 '+koDate(ref)+'까지 만들려면 연 '+pr.rate+'% 가정에서 매월 <b>'+fmtMan(Math.ceil(need/10)*10)+'원</b>이 필요합니다(지금 계획은 월 '+fmtShort(pr.add)+').';
   }
   $('#aChart').innerHTML=chartSVG(pr);
 
   $('#aGoals').innerHTML=GOALS.map(function(g){
     var v=valueAt(pr,g.date), l=dayDiff(todayISO(),g.date);
-    var ratio=Math.round(v/T10*100);
+    var ratio=Math.round(v/T1*100);
     return '<div class="row"><div class="ic" style="color:var(--'+g.id+')">'+g.no+'</div>'+
-      '<div class="tx"><b>'+g.label+' · '+koDate(g.date)+'</b><span>'+(l>0?'D-'+comma(l):(l===0?'D-DAY':'완료'))+' · 10억의 '+ratio+'%</span></div>'+
+      '<div class="tx"><b>'+g.label+' · '+koDate(g.date)+'</b><span>'+(l>0?'D-'+comma(l):(l===0?'D-DAY':'완료'))+' · '+fmtShort(T1)+'의 '+ratio+'%</span></div>'+
       '<div class="rt">'+fmtShort(v)+'</div></div>';
   }).join('');
 }
@@ -968,9 +1094,10 @@ function simCell(k,v,s){
 function chartSVG(pr){
   var W=340,H=176,L=34,R=8,T=16,B=26;
   var s=pr.series, n=s.length-1;
-  var maxV=T10*0.5;
+  var T1=S.targets.t1, T2=S.targets.t2;
+  var maxV=T1*0.5;
   for(var i=0;i<s.length;i++) if(s[i].v>maxV) maxV=s[i].v;
-  var ymax=Math.max(maxV*1.08,T10*1.25);
+  var ymax=Math.max(maxV*1.08,T1*1.25);
   function X(i){ return L+(W-L-R)*(i/n); }
   function Y(v){ return T+(H-T-B)*(1-Math.min(v,ymax)/ymax); }
   var base=Y(0), pts=[], step=Math.max(1,Math.round(n/64));
@@ -983,7 +1110,7 @@ function chartSVG(pr){
        '<stop offset="0%" stop-color="var(--acc)" stop-opacity="0.28"/>'+
        '<stop offset="100%" stop-color="var(--acc)" stop-opacity="0.02"/></linearGradient></defs>';
   // 목표선
-  [T10,T60].forEach(function(tg){
+  [T1,T2].forEach(function(tg){
     if(tg>ymax) return;
     var yy=Y(tg);
     svg+='<line x1="'+L+'" y1="'+yy.toFixed(1)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(1)+'" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 3"/>';
@@ -998,15 +1125,16 @@ function chartSVG(pr){
     svg+='<line x1="'+xx.toFixed(1)+'" y1="'+T+'" x2="'+xx.toFixed(1)+'" y2="'+base.toFixed(1)+'" stroke="var(--'+g.id+')" stroke-width="1" stroke-opacity="0.55" stroke-dasharray="2 3"/>';
     svg+='<text x="'+xx.toFixed(1)+'" y="'+(T-5)+'" font-size="7.5" font-weight="800" fill="var(--'+g.id+')" text-anchor="middle">'+g.badge+'</text>';
   });
-  // x축 연도
-  var ys=[2028,2030,2032,2034,2036];
-  ys.forEach(function(yv){
+  // x축 연도 (기간에 맞춰 눈금 간격 자동)
+  var y0=parseInt(pr.from.slice(0,4),10), y1=parseInt(s[n].iso.slice(0,4),10), spanY=Math.max(1,y1-y0), stepY=1;
+  [1,2,5,10,20,50].some(function(v){ if(spanY/v<=6){ stepY=v; return true; } return false; });
+  for(var yv=Math.ceil((y0+1)/stepY)*stepY; yv<=y1; yv+=stepY){
     var idx=monthsBetween(pr.from,yv+'-01-01');
-    if(idx<0||idx>n) return;
+    if(idx<0||idx>n) continue;
     svg+='<text x="'+X(idx).toFixed(1)+'" y="'+(H-9)+'" font-size="7" fill="var(--mute)" text-anchor="middle" font-weight="700">'+yv+'</text>';
-  });
+  }
   // 도달점
-  [T10,T60].forEach(function(tg,ti){
+  [T1,T2].forEach(function(tg,ti){
     var c=crossing(pr,tg); if(!c) return;
     var idx=Math.max(0,Math.min(n,monthsBetween(pr.from,c.iso)));
     svg+='<circle cx="'+X(idx).toFixed(1)+'" cy="'+Y(c.v).toFixed(1)+'" r="2.6" fill="var(--acc)" stroke="var(--card)" stroke-width="1.4"/>';
@@ -1110,11 +1238,41 @@ function renderSettings(){
   Array.prototype.forEach.call(document.querySelectorAll('#sPayQuick button'),function(b){
     b.classList.toggle('on',Number(b.getAttribute('data-pay'))===S.payDay);
   });
-  Array.prototype.forEach.call(document.querySelectorAll('#sMain button'),function(b){
-    b.classList.toggle('on',b.getAttribute('data-main')===S.mainGoal);
+  $('#sMain').innerHTML=GOALS.map(function(g){
+    return '<button data-main="'+g.id+'" class="'+(g.id===S.mainGoal?'on':'')+'">'+esc(g.short)+'</button>';
+  }).join('');
+  GOALS.forEach(function(g,i){
+    var li=$('#sG'+(i+1)+'L'), di=$('#sG'+(i+1)+'D');
+    if(li&&document.activeElement!==li) li.value=g.label;
+    if(di&&document.activeElement!==di) di.value=g.date;
   });
+  var e1=$('#sT1'), e2=$('#sT2');
+  if(document.activeElement!==e1) e1.value=comma(S.targets.t1);
+  if(document.activeElement!==e2) e2.value=comma(S.targets.t2);
+  refreshTargetHints();
+  $('#sGoalsNote').textContent=GOALS.map(function(g){ return g.short+' '+dotDate(g.date); }).join(' · ');
   var n=Object.keys(HOLIDAYS).length;
-  $('#sVer').innerHTML='빌드 2026.11.22 · 공휴일 데이터 <b>'+n+'일</b> (2026.12~2037.1, 음력·대체공휴일 포함).<br>2028년 이후 공휴일은 현행 규정으로 계산한 예상치라 정부 발표에 따라 달라질 수 있습니다. 임시공휴일·선거일은 넣지 않았습니다.';
+  $('#sVer').innerHTML='빌드 2026.11.22 · 목표 일정·자산 커스터마이징 · 공휴일 데이터 <b>'+n+'일</b> (2026.12~2037.1, 음력·대체공휴일 포함).<br>2028년 이후 공휴일은 현행 규정으로 계산한 예상치라 정부 발표에 따라 달라질 수 있습니다. 임시공휴일·선거일은 넣지 않았습니다.';
+}
+function dotDate(iso){ var d=s2d(iso); return d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate(); }
+function refreshTargetHints(){
+  $('#sT1Hint').textContent=fmtMan(S.targets.t1)+' · '+comma(S.targets.t1)+'만원';
+  $('#sT2Hint').textContent=fmtMan(S.targets.t2)+' · '+comma(S.targets.t2)+'만원';
+}
+function refreshGoalTexts(){
+  Array.prototype.forEach.call(document.querySelectorAll('#sMain button'),function(b,i){
+    var g=GOALS[i]; if(!g) return;
+    b.textContent=g.short; b.setAttribute('data-main',g.id);
+    b.classList.toggle('on',g.id===S.mainGoal);
+  });
+}
+function setGoalDate(i,val){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(val))) return;
+  S.goals[i].date=val; buildGoals(); save();
+  var c=clampCal(calY,calM); calY=c.y; calM=c.m;
+  renderHome(); renderCal(); renderAsset(); renderSettings();
+  var dup=GOALS.filter(function(g){ return g.date===val; }).length;
+  toast(dup>1? '같은 날짜를 쓰는 일정이 있습니다' : GOALS[i].label+' 일정을 '+koDate(val)+'로 옮겼습니다');
 }
 function exportJSON(){
   var payload={app:'명퇴시계', version:1, exportedAt:new Date().toISOString(), state:S};
@@ -1136,6 +1294,7 @@ function importJSON(file){
       if(!st.memos&&!st.life&&!st.assets) throw new Error('bad');
       S=Object.assign(defState(),st);
       S.assets=Object.assign(defState().assets,S.assets||{});
+      normalize();
       save(); applyTheme(); renderAll(); renderSettings();
       toast('백업을 불러왔습니다');
     }catch(e){ toast('백업 파일을 읽지 못했습니다'); }
@@ -1255,8 +1414,57 @@ $('#sPay').addEventListener('change',function(){
 Array.prototype.forEach.call(document.querySelectorAll('#sPayQuick button'),function(b){
   b.addEventListener('click',function(){ S.payDay=Number(b.getAttribute('data-pay')); save(); renderSettings(); renderHome(); });
 });
-Array.prototype.forEach.call(document.querySelectorAll('#sMain button'),function(b){
-  b.addEventListener('click',function(){ S.mainGoal=b.getAttribute('data-main'); save(); renderSettings(); renderHome(); });
+$('#sMain').addEventListener('click',function(e){
+  var b=e.target.closest?e.target.closest('button[data-main]'):null;
+  if(!b) return;
+  S.mainGoal=b.getAttribute('data-main'); save(); renderSettings(); renderHome();
+  toast('홈 메인 목표를 바꿨습니다');
+});
+
+// 목표 일정 3개 — 이름·날짜 편집
+[1,2,3].forEach(function(i){
+  var gi=i-1, li=document.getElementById('sG'+i+'L'), di=document.getElementById('sG'+i+'D');
+  li.addEventListener('input',function(){
+    S.goals[gi].label=String(this.value).slice(0,24);
+    buildGoals(); save();
+    renderHome(); renderCal(); renderAsset(); refreshGoalTexts();
+  });
+  li.addEventListener('blur',function(){
+    if(!String(this.value).trim()){ this.value=DEF_GOALS[gi].label; }
+    S.goals[gi].label=String(this.value).slice(0,24);
+    buildGoals(); save(); renderHome(); renderCal(); renderAsset(); refreshGoalTexts();
+  });
+  di.addEventListener('change',function(){ setGoalDate(gi,this.value); });
+});
+$('#sGoalReset').addEventListener('click',function(){
+  if(!confirm('3개 일정의 이름과 날짜를 처음 값으로 되돌립니다. 계속할까요?')) return;
+  S.goals=defGoals(); buildGoals(); save();
+  var c=clampCal(calY,calM); calY=c.y; calM=c.m;
+  renderAll(); toast('목표 일정을 기본값으로 되돌렸습니다');
+});
+
+// 목표 자산 2개 — 만원 단위 편집
+function bindTarget(el,key){
+  el.addEventListener('input',function(){
+    var v=digits(this.value);
+    this.value=v===''?'':comma(parseInt(v,10));
+    if(v==='') return;
+    var n=parseInt(v,10);
+    if(n>=1&&n<=99999999){ S.targets[key]=n; save(); refreshTargetHints(); renderAsset(); }
+  });
+  el.addEventListener('change',function(){
+    var v=digits(this.value), n=v===''?0:parseInt(v,10);
+    if(!(n>=1)||n>99999999){ toast('1만원 ~ 99,999,999만원 사이로 넣어주세요'); }
+    else { S.targets[key]=n; save(); }
+    this.value=comma(S.targets[key]);
+    renderSettings(); renderAsset();
+  });
+}
+bindTarget($('#sT1'),'t1');
+bindTarget($('#sT2'),'t2');
+$('#sTReset').addEventListener('click',function(){
+  S.targets={t1:DEF_T1, t2:DEF_T2}; save(); renderSettings(); renderAsset();
+  toast('목표 자산을 '+fmtShort(DEF_T1)+'·'+fmtShort(DEF_T2)+'으로 되돌렸습니다');
 });
 $('#sExport').addEventListener('click',exportJSON);
 $('#sImportBtn').addEventListener('click',function(){ $('#sFile').click(); });
@@ -1267,7 +1475,7 @@ $('#sFile').addEventListener('change',function(){
 $('#sReset').addEventListener('click',function(){
   if(!confirm('메모·자산·삼원칙 기록을 모두 지웁니다. 되돌릴 수 없습니다. 계속할까요?')) return;
   try{ localStorage.removeItem(KEY); }catch(e){}
-  S=defState(); save(); applyTheme(); renderAll();
+  S=defState(); normalize(); save(); applyTheme(); renderAll();
   toast('모든 데이터를 지웠습니다');
 });
 
