@@ -1,5 +1,5 @@
 /* 명퇴시계 서비스 워커 — 앱 껍데기를 캐시해 오프라인에서도 열립니다 */
-const CACHE = 'myeongtoe-v1';
+const CACHE = 'myeongtoe-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -30,14 +30,15 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // 화면 이동은 캐시 우선, 없으면 네트워크, 그래도 안 되면 index.html
+  // 화면 이동은 네트워크 우선, 끊겼을 때만 캐시된 앱 화면으로 대체합니다.
   if (req.mode === 'navigate') {
     e.respondWith(
-      caches.match('./index.html').then((hit) => hit || fetch(req).catch(() => caches.match('./index.html')))
+      fetch(req).catch(() => caches.match('./index.html'))
     );
     return;
   }
 
+  // 나머지 파일은 캐시 우선, 없으면 받아서 캐시에 넣습니다.
   e.respondWith(
     caches.match(req).then((hit) => {
       if (hit) return hit;
