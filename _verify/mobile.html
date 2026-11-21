@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>배포 검증용 (390×844)</title>
+<style>
+  html,body{margin:0;padding:0;background:#2b2f36}
+  #wrap{position:absolute;top:0;left:0;width:390px;height:844px;overflow:hidden;background:#000}
+  #f{width:390px;height:844px;border:0;display:block}
+  #log{position:absolute;top:0;left:398px;width:520px;color:#7dffb2;font:11px/1.5 monospace;white-space:pre-wrap;margin:0;padding:8px}
+</style>
+</head>
+<body>
+<div id="wrap"><iframe id="f" title="명퇴시계 390x844"></iframe></div>
+<pre id="log">검증 준비…</pre>
+<script>
+(function(){
+  var f=document.getElementById('f');
+  var log=document.getElementById('log');
+  window.__errs=[];
+  var w=f.contentWindow;
+  // 같은 출처 이동이므로 window 객체에 건 리스너/덮어쓴 console 이 앱 로드까지 살아 있습니다
+  ['error','unhandledrejection'].forEach(function(t){
+    w.addEventListener(t,function(e){
+      window.__errs.push(t+': '+((e&&(e.message||e.reason))||''));
+    });
+  });
+  var origErr=w.console.error;
+  w.console.error=function(){
+    window.__errs.push('console.error: '+Array.prototype.slice.call(arguments).join(' '));
+    return origErr.apply(w.console, arguments);
+  };
+  f.addEventListener('load', function(){
+    var d=f.contentDocument;
+    log.textContent=['ready: '+new Date().toISOString(),
+      'innerWidth x innerHeight: '+f.contentWindow.innerWidth+' x '+f.contentWindow.innerHeight,
+      'title: '+(d&&d.title),
+      'scrollWidth: '+(d&&d.documentElement.scrollWidth),
+      'errors: '+window.__errs.length].join('\n');
+  });
+  f.src='../';
+})();
+</script>
+</body>
+</html>
