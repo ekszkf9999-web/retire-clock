@@ -51,7 +51,7 @@
     window.__check.metrics=metrics();
     window.__check.stage='first-load';
     // 앱 인라인 스크립트를 같은 iframe에서 한 번 더 실행하며 에러를 잡습니다
-    fetch('../', {cache:'no-store'}).then(function(r){ return r.text(); }).then(function(html){
+    fetch('../?build=ce50cec', {cache:'no-store'}).then(function(r){ return r.text(); }).then(function(html){
       var m=html.match(/<script>([\s\S]*?)<\/script>/);
       if(!m){ window.__check.rerun={error:'script not found'}; return; }
       var w=f.contentWindow;
@@ -90,7 +90,7 @@
     log.textContent=lines.join('\n');
   }
   setInterval(paint, 700);
-  f.src='../';
+  f.src='../?build=ce50cec';
 })();
 </script>
 </body>
