@@ -1,5 +1,5 @@
 /* 명퇴시계 서비스 워커 — 앱 껍데기를 캐시해 오프라인에서도 열립니다 */
-const CACHE = 'myeongtoe-v3';
+const CACHE = 'myeongtoe-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -11,7 +11,8 @@ const ASSETS = [
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE)
-      .then((c) => c.addAll(ASSETS))
+      // cache:'reload' 로 HTTP 캐시를 건너뛰고 항상 최신 사본을 담습니다
+      .then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' }))))
       .then(() => self.skipWaiting())
   );
 });
