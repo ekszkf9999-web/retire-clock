@@ -723,7 +723,9 @@ function mainGoal(){ for(var i=0;i<GOALS.length;i++) if(GOALS[i].id===S.mainGoal
 function renderHome(){
   var t=todayISO();
   $('#hDate').textContent=koDate(t)+' ('+wdOf(t)+')'+(isWorkday(t)?' · 출근일':' · 휴일');
-  $('#hAge').textContent=ageTxt(t);
+  var ageStr=ageTxt(t);
+  $('#hAge').textContent=ageStr;
+  $('#hAge').style.display=ageStr?'':'none';
 
   var seg=$('#goalSeg');
   seg.innerHTML=GOALS.map(function(g){

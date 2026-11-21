@@ -1,5 +1,5 @@
 /* 명퇴시계 서비스 워커 — 앱 껍데기를 캐시해 오프라인에서도 열립니다 */
-const CACHE = 'myeongtoe-v2';
+const CACHE = 'myeongtoe-v3';
 const ASSETS = [
   './',
   './index.html',
