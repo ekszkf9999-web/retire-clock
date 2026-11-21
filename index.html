@@ -611,6 +611,13 @@ function defGoals(){ return DEF_GOALS.map(function(g){ return {id:g.id,label:g.l
 function cleanLabel(s){
   return String(s==null?'':s).replace(/[<>&"']/g,'').replace(/\s+/g,' ').trim().slice(0,24);
 }
+/* 목표 날짜는 2000~2100년 사이의 실제 달력 날짜만 받습니다 */
+function validISO(v){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(v))) return false;
+  var y=parseInt(String(v).slice(0,4),10), m=parseInt(String(v).slice(5,7),10), d=parseInt(String(v).slice(8,10),10);
+  if(!(y>=2000&&y<=2100)||!(m>=1&&m<=12)||!(d>=1)) return false;
+  return d<=new Date(y,m,0).getDate();
+}
 function shortLabel(l){
   if(l.length<=8) return l;
   var parts=l.split(' ').filter(function(x){ return !!x; });
@@ -627,7 +634,7 @@ function buildGoals(){
   GOALS=DEF_GOALS.map(function(d,i){
     var o=src[i]||{};
     var label=cleanLabel(o.label)||d.label;
-    var date=/^\d{4}-\d{2}-\d{2}$/.test(String(o.date||''))?String(o.date):d.date;
+    var date=validISO(o.date)?String(o.date):d.date;
     return {id:d.id,no:d.no,label:label,date:date,short:shortLabel(label),badge:badgeLabel(label)};
   });
   GMAP={};
@@ -641,7 +648,7 @@ function lastGoal(){
 function maxYear(){
   var y=2036;
   GOALS.forEach(function(g){ var v=parseInt(g.date.slice(0,4),10); if(v>y) y=v; });
-  return y;
+  return Math.min(y,2100);
 }
 
 var PR=[
@@ -663,7 +670,7 @@ function normGoals(src){
     for(var i=0;i<3;i++){
       var o=src[i]; if(!o||typeof o!=='object') continue;
       var lb=cleanLabel(o.label); if(lb) out[i].label=lb;
-      if(/^\d{4}-\d{2}-\d{2}$/.test(String(o.date||''))) out[i].date=String(o.date);
+      if(validISO(o.date)) out[i].date=String(o.date);
     }
   }
   return out;
@@ -1267,7 +1274,12 @@ function refreshGoalTexts(){
   });
 }
 function setGoalDate(i,val){
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(val))) return;
+  if(!validISO(val)){
+    toast('날짜를 알아볼 수 없습니다. 2000~2100년 사이로 넣어주세요');
+    renderSettings();
+    var bad=$('#sG'+(i+1)+'D'); if(bad) bad.value=S.goals[i].date;
+    return;
+  }
   S.goals[i].date=val; buildGoals(); save();
   var c=clampCal(calY,calM); calY=c.y; calM=c.m;
   renderHome(); renderCal(); renderAsset(); renderSettings();
